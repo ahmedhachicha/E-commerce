@@ -1,0 +1,96 @@
+﻿@model IEnumerable<TechProduct.Models.ShippingDetail>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+<div>
+    @if (TempData["message"] != null)
+    {
+        <div class="alert alert-success">@TempData["message"]</div>
+    }
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Client Name
+            </th>
+            <th>
+                Order Time
+            </th>
+            <th>
+                Order Products
+            </th>
+            <th>
+                Order Price
+            </th>
+            <th>
+                Shipping Address
+            </th>
+            <th>
+               State
+            </th>
+            <th>
+                Actions
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.orderDate)
+            </td>
+            <td>
+                @foreach (var prod in (ViewData["ordredProductsList"] as List<CarteLine2>))
+                {
+        <br>@Html.DisplayFor(modelItem => prod.product.Name)
+                            <b>x</b>
+                                                @Html.DisplayFor(modelItem => prod.Quantity)}
+            </td>
+            <td> 
+                @{ 
+                    List<CarteLine2> blist = (List<CarteLine2>)ViewData["ordredProductsList"];
+                    var sum = blist.Sum(p => p.product.Price * p.Quantity);
+                                <b>@sum TND</b>
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Adress)
+            </td>
+
+            <td>
+                @{ var state = item.state;
+                    if (state)
+                    {
+
+        <b>Terminer</b> }
+    else
+    {
+        <b>Encours</b> } }
+            </td>
+            <td>
+            <th>
+                <form asp-action="Confirm" asp-controller="Order">
+                    <input type="hidden" name="oid" id="oid" value="@item.id" />
+                    <input type="submit" class="btn btn-info" value="Confirm Order" />
+                </form>
+            </th>
+            <th>
+                <form asp-action="Delete" asp-controller="Order">
+                    <input type="hidden" name="prod" id="prod" value="@item" />
+                    <input type="hidden" name="id" id="id" value="@item.id" />
+                    <input type="submit" class="btn btn-info" value="Delete Order" />
+                </form>
+            </th>
+                </td>
+        </tr>
+}
+    </tbody>
+</table>
